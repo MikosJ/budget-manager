@@ -1,6 +1,7 @@
 package budget;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Purchases {
@@ -12,7 +13,7 @@ public class Purchases {
         this.productList = new ArrayList<>();
     }
 
-    public void addPurchase() {
+    public void addPurchase(String type) {
         System.out.println("Enter purchase name:");
         String name = sc.nextLine();
         System.out.println("Enter its price:");
@@ -26,6 +27,8 @@ public class Purchases {
         System.out.println(name + " $" + price);
         this.productList.add(new Product(name + " $" + price));
         System.out.println("Purchase was added!");
+        this.productList.get(productList.size()-1).setType(type);
+
 
 
     }
@@ -42,27 +45,26 @@ public class Purchases {
 
     public void menu(Scanner sc) {
         boolean execute = true;
-
+        String type = null;
         while (execute) {
             System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n0) Exit");
             int option = sc.nextInt();
             sc.nextLine();
-
             switch (option) {
                 case 1:
-                    System.out.println("");
+                    System.out.println();
                     this.addIncome(sc);
                     break;
                 case 2:
-                    System.out.println("");
-                    this.addPurchase();
+                    System.out.println();
+                    setTypeSubMenu();
                     break;
                 case 3:
-                    System.out.println("");
-                    this.printPurchases();
+                    System.out.println();
+                    this.getTypeSubMenu();
                     break;
                 case 4:
-                    System.out.println("");
+                    System.out.println();
                     this.getBalance();
                     break;
                 case 0:
@@ -73,58 +75,101 @@ public class Purchases {
             }
         }
     }
-
-    public void purchaseSubMenu(Scanner sc) {
+    public void setTypeSubMenu(){
         boolean execute = true;
-
+        String type;
         while (execute) {
-            System.out.println("\nChoose the type of purchase:\n1) Food\n2) Clothes\n3) Entertainment\n4) Other\n5) Back");
+            System.out.println("\nChoose the type of purchase\n1) Food\n2) Clothes\n3) Entertainment\n4) Other\n5) Back");
             int option = sc.nextInt();
             sc.nextLine();
-
+            System.out.println();
             switch (option) {
                 case 1:
-                    System.out.println("");
-
+                    type = "Food";
+                    addPurchase(type);
                     break;
                 case 2:
-                    System.out.println("");
-
+                    type = "Clothes";
+                    addPurchase(type);
                     break;
                 case 3:
-                    System.out.println("");
-
+                    type = "Entertainment";
+                    addPurchase(type);
                     break;
                 case 4:
-                    System.out.println("");
-
+                    type = "Other";
+                    addPurchase(type);
                     break;
                 case 5:
-
-                    menu(sc);
+                    execute = false;
                     break;
-
             }
         }
     }
+    public void getTypeSubMenu(){
+        boolean execute = true;
+        while (execute) {
+            System.out.println("\nChoose the type of purchase\n1) Food\n2) Clothes\n3) Entertainment\n4) Other\n5) All\n6) Back");
+            int option = sc.nextInt();
+            sc.nextLine();
+            System.out.println();
+            switch (option) {
+                case 1:
+                    System.out.println("Food:");
+                    printPurchases("Food");
+                    break;
+                case 2:
+                    System.out.println("Clothes:");
+                    printPurchases("Clothes");
+                    break;
+                case 3:
+                    System.out.println("Entertainment:");
+                    printPurchases("Entertainment");
+                    break;
+                case 4:
+                    System.out.println("Other:");
+                    printPurchases("Other");
+                    break;
+                case 5:
+                    System.out.println("All:");
+                    printPurchases("All");
+                    break;
+                case 6:
+                    execute = false;
+                    break;
+            }
 
-    public void printPurchases() {
+        }
+    }
+
+    public void printPurchases(String type) {
         if (!this.productList.isEmpty()) {
             for (Product product : this.productList) {
-                System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
+                if (Objects.equals(type, product.getType())){
+                    System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
+                }
+                if (Objects.equals(type, "All")) {
+                    System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
+                }
             }
-            System.out.println("Total sum: $" + getTotal());
+            System.out.println("Total sum: $" + getTotal(type));
         } else {
             System.out.println("The purchase list is empty");
         }
 
     }
 
-    private double getTotal() {
+    private double getTotal(String type) {
         double sum = 0.0;
         for (Product product : this.productList) {
-            double cost = product.getPrice();
-            sum += cost;
+            if (Objects.equals(type, product.getType())) {
+                double cost = product.getPrice();
+                sum += cost;
+            }
+            if (Objects.equals(type, "All")){
+                double cost = product.getPrice();
+                sum += cost;
+            }
         }
         return sum;
     }
