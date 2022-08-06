@@ -1,5 +1,9 @@
 package budget;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -27,8 +31,7 @@ public class Purchases {
         System.out.println(name + " $" + price);
         this.productList.add(new Product(name + " $" + price));
         System.out.println("Purchase was added!");
-        this.productList.get(productList.size()-1).setType(type);
-
+        this.productList.get(productList.size() - 1).setType(type);
 
 
     }
@@ -40,14 +43,14 @@ public class Purchases {
     }
 
     public void getBalance() {
-        System.out.println("Balance: $" + this.balance);
+        System.out.println(String.format("Balance $%.2f", this.balance));
     }
 
     public void menu(Scanner sc) {
         boolean execute = true;
         String type = null;
         while (execute) {
-            System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n0) Exit");
+            System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n5) Save\n6) Load\n0) Exit");
             int option = sc.nextInt();
             sc.nextLine();
             switch (option) {
@@ -67,6 +70,14 @@ public class Purchases {
                     System.out.println();
                     this.getBalance();
                     break;
+                case 5:
+                    System.out.println();
+                    this.saveToFile();
+                    break;
+                case 6:
+                    System.out.println();
+                    loadPurchases();
+                    break;
                 case 0:
                     System.out.println("\nBye!");
                     execute = false;
@@ -75,7 +86,8 @@ public class Purchases {
             }
         }
     }
-    public void setTypeSubMenu(){
+
+    public void setTypeSubMenu() {
         boolean execute = true;
         String type;
         while (execute) {
@@ -106,7 +118,8 @@ public class Purchases {
             }
         }
     }
-    public void getTypeSubMenu(){
+
+    public void getTypeSubMenu() {
         boolean execute = true;
         while (execute) {
             System.out.println("\nChoose the type of purchase\n1) Food\n2) Clothes\n3) Entertainment\n4) Other\n5) All\n6) Back");
@@ -145,14 +158,14 @@ public class Purchases {
     public void printPurchases(String type) {
         if (!this.productList.isEmpty()) {
             for (Product product : this.productList) {
-                if (Objects.equals(type, product.getType())){
+                if (Objects.equals(type, product.getType())) {
                     System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
                 }
                 if (Objects.equals(type, "All")) {
                     System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
                 }
             }
-            System.out.println("Total sum: $" + getTotal(type));
+            System.out.println(String.format("Total sum: $%.2f", getTotal(type)));
         } else {
             System.out.println("The purchase list is empty");
         }
@@ -166,12 +179,56 @@ public class Purchases {
                 double cost = product.getPrice();
                 sum += cost;
             }
-            if (Objects.equals(type, "All")){
+            if (Objects.equals(type, "All")) {
                 double cost = product.getPrice();
                 sum += cost;
             }
         }
         return sum;
+    }
+
+    private void saveToFile() {
+        double balance = this.balance;
+        try {
+            FileWriter file = new FileWriter("purchases.txt");
+            file.write(String.format("Balance $%.2f", balance));
+            for (Product product :
+                    this.productList) {
+                file.write(String.format("\nName: %s, Price: $%.2f, Category: %s", product.getName(), product.getPrice(), product.getType()));
+            }
+            file.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public void loadPurchases() {
+        this.productList.clear();
+        File file = new File("purchases.txt");
+        try {
+            Scanner reader = new Scanner(file);
+            while (reader.hasNextLine()) {
+                String purchase = reader.nextLine();
+                System.out.println(purchase);
+                if (purchase.startsWith("Balance")) {
+                    this.balance = Double.parseDouble(purchase.substring(purchase.indexOf("$") + 1));
+                }
+                if (purchase.startsWith("Name")) {
+
+                    String productName = purchase.substring(purchase.indexOf(" ") + 1, purchase.indexOf(","));
+                    String productPrice = purchase.substring(purchase.lastIndexOf("$") + 1, purchase.indexOf(", C"));
+                    String productType = purchase.substring(purchase.lastIndexOf(" ") + 1);
+                    this.productList.add(new Product(productName + " $" + productPrice));
+                    this.productList.get(productList.size() - 1).setType(productType);
+
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 

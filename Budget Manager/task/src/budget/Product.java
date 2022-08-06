@@ -7,8 +7,8 @@ public class Product {
 
 
     public Product(String userInput) {
-        this.name = userInput.substring(0, userInput.indexOf(" $"));
-        this.price = Double.parseDouble(userInput.substring(userInput.indexOf("$") + 1));
+        this.name = userInput.substring(0, userInput.lastIndexOf(" $"));
+        this.price = Double.parseDouble(userInput.substring(userInput.lastIndexOf("$") + 1));
     }
 
     public void setType(String providedType) {
