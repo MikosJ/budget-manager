@@ -43,46 +43,44 @@ public class Purchases {
     }
 
     public void getBalance() {
-        System.out.println(String.format("Balance $%.2f", this.balance));
+        System.out.printf("Balance $%.2f%n\n", this.balance);
     }
 
     public void menu(Scanner sc) {
         boolean execute = true;
-        String type = null;
         while (execute) {
             System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n5) Save\n6) Load\n0) Exit");
             int option = sc.nextInt();
             sc.nextLine();
             switch (option) {
-                case 1:
+                case 1 -> {
                     System.out.println();
                     this.addIncome(sc);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     System.out.println();
                     setTypeSubMenu();
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     System.out.println();
                     this.getTypeSubMenu();
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     System.out.println();
                     this.getBalance();
-                    break;
-                case 5:
+                }
+                case 5 -> {
                     System.out.println();
                     this.saveToFile();
-                    break;
-                case 6:
+                }
+                case 6 -> {
                     System.out.println();
                     loadPurchases();
-                    break;
-                case 0:
+                }
+                case 0 -> {
                     System.out.println("\nBye!");
                     execute = false;
-                    break;
-
+                }
             }
         }
     }
@@ -96,25 +94,23 @@ public class Purchases {
             sc.nextLine();
             System.out.println();
             switch (option) {
-                case 1:
+                case 1 -> {
                     type = "Food";
                     addPurchase(type);
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     type = "Clothes";
                     addPurchase(type);
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     type = "Entertainment";
                     addPurchase(type);
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     type = "Other";
                     addPurchase(type);
-                    break;
-                case 5:
-                    execute = false;
-                    break;
+                }
+                case 5 -> execute = false;
             }
         }
     }
@@ -127,29 +123,27 @@ public class Purchases {
             sc.nextLine();
             System.out.println();
             switch (option) {
-                case 1:
+                case 1 -> {
                     System.out.println("Food:");
                     printPurchases("Food");
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     System.out.println("Clothes:");
                     printPurchases("Clothes");
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     System.out.println("Entertainment:");
                     printPurchases("Entertainment");
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     System.out.println("Other:");
                     printPurchases("Other");
-                    break;
-                case 5:
+                }
+                case 5 -> {
                     System.out.println("All:");
                     printPurchases("All");
-                    break;
-                case 6:
-                    execute = false;
-                    break;
+                }
+                case 6 -> execute = false;
             }
 
         }
@@ -165,7 +159,7 @@ public class Purchases {
                     System.out.println(product.getName() + " $" + String.format("%.2f", product.getPrice()));
                 }
             }
-            System.out.println(String.format("Total sum: $%.2f", getTotal(type)));
+            System.out.printf("Total sum: $%.2f%n\n", getTotal(type));
         } else {
             System.out.println("The purchase list is empty");
         }
