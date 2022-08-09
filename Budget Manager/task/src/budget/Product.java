@@ -1,6 +1,6 @@
 package budget;
 
-public class Product {
+public class Product implements Comparable<Product> {
     private final String name;
     private final double price;
     private String type;
@@ -23,7 +23,15 @@ public class Product {
         return price;
     }
 
+
     public String getName() {
-        return name;
+        return this.name;
+    }
+
+    @Override
+    public int compareTo(Product o) {
+        if (this.getPrice() > o.getPrice()) return -1;
+        else if (o.getPrice() > this.getPrice()) return 1;
+        return 0;
     }
 }

@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Purchases {
-    ArrayList<Product> productList;
+    List<Product> productList;
     double balance;
     Scanner sc = new Scanner(System.in);
 
@@ -49,7 +47,7 @@ public class Purchases {
     public void menu(Scanner sc) {
         boolean execute = true;
         while (execute) {
-            System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n5) Save\n6) Load\n0) Exit");
+            System.out.println("\nChoose your action:\n1) Add income\n2) Add purchase\n3) Show list of purchases\n4) Balance\n5) Save\n6) Load\n7) Analyze (Sort)\n0) Exit");
             int option = sc.nextInt();
             sc.nextLine();
             switch (option) {
@@ -76,6 +74,11 @@ public class Purchases {
                 case 6 -> {
                     System.out.println();
                     loadPurchases();
+                    System.out.println("Purchases were loaded!\n");
+                }
+                case 7 -> {
+                    System.out.println();
+                    analyze();
                 }
                 case 0 -> {
                     System.out.println("\nBye!");
@@ -186,8 +189,7 @@ public class Purchases {
         try {
             FileWriter file = new FileWriter("purchases.txt");
             file.write(String.format("Balance $%.2f", balance));
-            for (Product product :
-                    this.productList) {
+            for (Product product : this.productList) {
                 file.write(String.format("\nName: %s, Price: $%.2f, Category: %s", product.getName(), product.getPrice(), product.getType()));
             }
             file.close();
@@ -223,6 +225,50 @@ public class Purchases {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void analyze() {
+        boolean execute = true;
+        while (execute) {
+            System.out.println("\nHow do you want to sort?\n1) Sort by all purchases\n2) Sort by type\n3) Sort certain type\n4) Back");
+            int option = sc.nextInt();
+            sc.nextLine();
+            System.out.println();
+            switch (option) {
+                case 1 -> sortPurchases("All");
+                case 2 -> spentByType();
+                case 3 -> sortPurchases(typeChoice());
+                case 4 -> execute = false;
+            }
+        }
+    }
+
+    public String typeChoice() {
+        System.out.println("\nChoose the type of purchase\n1) Food\n2) Clothes\n3) Entertainment\n4) Other");
+        String choiceStr = "";
+        int choice = sc.nextInt();
+        switch (choice) {
+            case 1 -> choiceStr = "Food";
+            case 2 -> choiceStr = "Clothes";
+            case 3 -> choiceStr = "Entertainment";
+            case 4 -> choiceStr = "Other";
+        }
+        System.out.println();
+        return choiceStr;
+    }
+
+    public void sortPurchases(String type) {
+        Collections.sort(this.productList);
+        printPurchases(type);
+    }
+
+    public void spentByType() {
+        System.out.println("Types:");
+        System.out.printf("Food - $%.2f\n", getTotal("Food"));
+        System.out.printf("Entertainment - $%.2f\n", getTotal("Entertainment"));
+        System.out.printf("Clothes - $%.2f\n", getTotal("Clothes"));
+        System.out.printf("Other - $%.2f\n", getTotal("Other"));
+        System.out.printf("Total sum: $%.2f\n", getTotal("All"));
     }
 
 
